@@ -5,15 +5,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.arles.backendjava.services.UserServiceInterface;
 
-@EnableWebSecurity
 @Configuration
+@EnableWebSecurity
 public class WebSecurity {
 
     private final UserServiceInterface userService;
@@ -26,27 +28,30 @@ public class WebSecurity {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        String url = "/users";
+        String url_login = "/login";
+        // Configure AuthenticationManagerBuilder
+        final AuthenticationManagerBuilder authenticationManagerBuilder = http
+                .getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.userDetailsService(userService)
+                .passwordEncoder(bCryptPasswordEncoder);
+        final AuthenticationManager authenticationManager = authenticationManagerBuilder.getOrBuild();
+
         http.csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/users")
+                .requestMatchers(HttpMethod.POST, url)
                 .permitAll()
                 .anyRequest()
-                .authenticated();
+                .authenticated()
+                .and()
+                .authenticationManager(authenticationManager)
+                .addFilterBefore(new AuthenticationFilter(url_login, authenticationManager),
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
 
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http)
-            throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-
-                .userDetailsService(userService)
-                .passwordEncoder(bCryptPasswordEncoder)
-                .and()
-                .build();
     }
 
 }
