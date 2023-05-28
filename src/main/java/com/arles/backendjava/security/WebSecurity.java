@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -30,7 +31,6 @@ public class WebSecurity {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         String url = "/users";
-        String url_login = "/login";
         // Configure AuthenticationManagerBuilder
         final AuthenticationManagerBuilder authenticationManagerBuilder = http
                 .getSharedObject(AuthenticationManagerBuilder.class);
@@ -38,19 +38,27 @@ public class WebSecurity {
                 .passwordEncoder(bCryptPasswordEncoder);
         final AuthenticationManager authenticationManager = authenticationManagerBuilder.getOrBuild();
 
-        http.csrf()
-                .disable()
-                .authorizeHttpRequests()
+        http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, url)
                 .permitAll()
                 .anyRequest()
-                .authenticated()
-                .and()
-                .authenticationManager(authenticationManager)
-                .addFilterBefore(new AuthenticationFilter(url_login, authenticationManager),
-                        UsernamePasswordAuthenticationFilter.class);
+                .authenticated())
 
+                .authenticationManager(authenticationManager)
+                .addFilterBefore(getAuthenticationFilter(authenticationManager),
+                        UsernamePasswordAuthenticationFilter.class)
+
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return http.build();
+
+    }
+
+    public AuthenticationFilter getAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
+        String url_login = "/users/login";
+        final AuthenticationFilter filter = new AuthenticationFilter(url_login, authenticationManager);
+        return filter;
 
     }
 

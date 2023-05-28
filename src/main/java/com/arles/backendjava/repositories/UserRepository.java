@@ -1,4 +1,4 @@
-package com.arles.backendjava;
+package com.arles.backendjava.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 

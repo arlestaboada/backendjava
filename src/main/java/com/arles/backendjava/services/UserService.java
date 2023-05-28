@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.arles.backendjava.UserRepository;
+import com.arles.backendjava.repositories.UserRepository;
 import com.arles.backendjava.entities.UserEntity;
 import com.arles.backendjava.shared.dto.UserDto;
 
