@@ -47,7 +47,7 @@ public class WebSecurity {
                 .authenticationManager(authenticationManager)
                 .addFilterBefore(getAuthenticationFilter(authenticationManager),
                         UsernamePasswordAuthenticationFilter.class)
-
+                .addFilter(new AuthorizationFilter(authenticationManager))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
