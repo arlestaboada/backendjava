@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.arles.backendjava.repositories.UserRepository;
 import com.arles.backendjava.entities.UserEntity;
+import com.arles.backendjava.exceptions.EmailExistsException;
 import com.arles.backendjava.shared.dto.UserDto;
 
 @Service
@@ -27,8 +28,9 @@ public class UserService implements UserServiceInterface {
     @Override
     public UserDto createUser(UserDto user) {
 
-        if (userRepository.findByEmail(user.getEmail()) != null)
-            throw new RuntimeException("El correo electrónico ya existe.");
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            throw new EmailExistsException("El correo electrónico ya existe.");
+        }
 
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(user, userEntity);
@@ -51,6 +53,17 @@ public class UserService implements UserServiceInterface {
             throw new UsernameNotFoundException(email);
         }
         return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+    }
+
+    @Override
+    public UserDto getUser(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity == null) {
+            throw new UsernameNotFoundException(email);
+        }
+        UserDto userToReturn = new UserDto();
+        BeanUtils.copyProperties(userEntity, userToReturn);
+        return userToReturn;
     }
 
 }

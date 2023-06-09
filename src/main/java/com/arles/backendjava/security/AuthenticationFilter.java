@@ -14,7 +14,10 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.arles.backendjava.applicationContext.SpringApplicationContext;
 import com.arles.backendjava.models.requests.UserLoginRequestModel;
+import com.arles.backendjava.services.UserServiceInterface;
+import com.arles.backendjava.shared.dto.UserDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
@@ -60,8 +63,14 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         String userName = ((User) authentication.getPrincipal()).getUsername();
         String token = Jwts.builder().setSubject(userName)
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_DATE))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET).compact();
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret()).compact();
 
+        String beanName = "userService";
+        // añadir el header con id publico
+        UserServiceInterface userService = (UserServiceInterface) SpringApplicationContext.getBean(beanName);
+
+        UserDto userDto = userService.getUser(userName);
+        response.addHeader("UserId", userDto.getUserId());
         response.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
 
     }
