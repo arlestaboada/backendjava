@@ -1,5 +1,6 @@
 package com.arles.backendjava.controllers;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,8 +30,9 @@ public class UserController {
                 .getAuthentication();
         String email = authentication.getPrincipal().toString();
         UserDto userDto = userService.getUser(email);
-        UserRest userRest = new UserRest();
-        BeanUtils.copyProperties(userDto, userRest);
+        ModelMapper modelMapper = new ModelMapper();
+        UserRest userRest = modelMapper.map(userDto, UserRest.class);
+
         return userRest;
     }
 
