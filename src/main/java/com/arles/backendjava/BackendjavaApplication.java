@@ -3,12 +3,14 @@ package com.arles.backendjava;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.arles.backendjava.applicationContext.SpringApplicationContext;
 import com.arles.backendjava.security.AppProperties;
 
 @SpringBootApplication
+@EnableJpaAuditing
 public class BackendjavaApplication {
 
 	public static void main(String[] args) {

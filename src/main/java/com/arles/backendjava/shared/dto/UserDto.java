@@ -1,6 +1,8 @@
 package com.arles.backendjava.shared.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDto implements Serializable {
 
@@ -13,6 +15,8 @@ public class UserDto implements Serializable {
     private String email;
     private String password;
     private String encryptedPassword;
+
+    private List<PostDto> posts = new ArrayList<>();
 
     public long getId() {
         return this.id;
@@ -68,6 +72,14 @@ public class UserDto implements Serializable {
 
     public void setEncryptedPassword(String encryptedPassword) {
         this.encryptedPassword = encryptedPassword;
+    }
+
+    public List<PostDto> getPosts() {
+        return this.posts;
+    }
+
+    public void setPosts(List<PostDto> posts) {
+        this.posts = posts;
     }
 
 }
