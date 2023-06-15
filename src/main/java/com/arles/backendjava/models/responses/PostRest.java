@@ -1,11 +1,8 @@
-package com.arles.backendjava.shared.dto;
+package com.arles.backendjava.models.responses;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class PostDto implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class PostRest {
 
     private long id;
     private String post_id;
@@ -14,8 +11,10 @@ public class PostDto implements Serializable {
     private Date createdAt;
     private Date expiresAt;
 
-    private UserDto user;
-    private ExposureDto exposure;
+    private boolean expired = false;
+    private UserRest user;
+
+    private ExposureRest exposure;
 
     public long getId() {
         return this.id;
@@ -65,19 +64,31 @@ public class PostDto implements Serializable {
         this.expiresAt = expiresAt;
     }
 
-    public UserDto getUser() {
+    public boolean isExpired() {
+        return this.expired;
+    }
+
+    public boolean getExpired() {
+        return this.expired;
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
+    }
+
+    public UserRest getUser() {
         return this.user;
     }
 
-    public void setUser(UserDto user) {
+    public void setUser(UserRest user) {
         this.user = user;
     }
 
-    public ExposureDto getExposure() {
+    public ExposureRest getExposure() {
         return this.exposure;
     }
 
-    public void setExposure(ExposureDto exposure) {
+    public void setExposure(ExposureRest exposure) {
         this.exposure = exposure;
     }
 

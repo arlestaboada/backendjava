@@ -33,10 +33,10 @@ public class PostEntity implements Serializable {
     private String title;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
-    @Column(nullable = false)
-    private Date created_at;
     @CreatedDate
-    private Date expires_at;
+    private Date createdAt;
+    @Column(nullable = false)
+    private Date expiresAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -78,20 +78,20 @@ public class PostEntity implements Serializable {
         this.content = content;
     }
 
-    public Date getCreated_at() {
-        return this.created_at;
+    public Date getCreatedAt() {
+        return this.createdAt;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Date getExpires_at() {
-        return this.expires_at;
+    public Date getExpiresAt() {
+        return this.expiresAt;
     }
 
-    public void setExpires_at(Date expires_at) {
-        this.expires_at = expires_at;
+    public void setExpiresAt(Date expiresAt) {
+        this.expiresAt = expiresAt;
     }
 
     public UserEntity getUser() {
