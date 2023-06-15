@@ -1,5 +1,8 @@
 package com.arles.backendjava.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.arles.backendjava.models.responses.PostRest;
 import com.arles.backendjava.models.requests.UserDetailsRequestModel;
 import com.arles.backendjava.models.responses.UserRest;
 import com.arles.backendjava.services.UserServiceInterface;
+import com.arles.backendjava.shared.dto.PostDto;
 import com.arles.backendjava.shared.dto.UserDto;
 
 @RestController
@@ -46,6 +51,17 @@ public class UserController {
         BeanUtils.copyProperties(createdUser, userToReturn);
 
         return userToReturn;
+    }
+
+    @GetMapping("/post") // localhost:8080/users/post
+    public List<PostRest> getPots() {
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+        String email = authentication.getPrincipal().toString();
+        List<PostDto> posts = userService.getUserPots(email);
+        List<PostRest> postRests = new ArrayList<>();
+        return postRests;
     }
 
 }
