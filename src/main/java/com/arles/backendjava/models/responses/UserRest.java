@@ -1,11 +1,15 @@
 package com.arles.backendjava.models.responses;
 
+import java.util.List;
+
 public class UserRest {
 
     private String userId;
     private String firstName;
     private String lastName;
     private String email;
+
+    List<PostRest> posts;
 
     public String getFirstName() {
         return this.firstName;
@@ -37,6 +41,14 @@ public class UserRest {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public List<PostRest> getPosts() {
+        return this.posts;
+    }
+
+    public void setPosts(List<PostRest> posts) {
+        this.posts = posts;
     }
 
 }

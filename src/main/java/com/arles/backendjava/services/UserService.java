@@ -1,8 +1,10 @@
 package com.arles.backendjava.services;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -11,9 +13,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.arles.backendjava.repositories.PostRepository;
 import com.arles.backendjava.repositories.UserRepository;
+import com.arles.backendjava.entities.PostEntity;
 import com.arles.backendjava.entities.UserEntity;
 import com.arles.backendjava.exceptions.EmailExistsException;
+import com.arles.backendjava.shared.dto.PostDto;
 import com.arles.backendjava.shared.dto.UserDto;
 
 @Service
@@ -23,7 +28,13 @@ public class UserService implements UserServiceInterface {
     UserRepository userRepository;
 
     @Autowired
+    PostRepository postRepository;
+
+    @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    ModelMapper mapper;
 
     @Override
     public UserDto createUser(UserDto user) {
@@ -64,6 +75,22 @@ public class UserService implements UserServiceInterface {
         UserDto userToReturn = new UserDto();
         BeanUtils.copyProperties(userEntity, userToReturn);
         return userToReturn;
+    }
+
+    @Override
+    public List<PostDto> getUserPots(String email) {
+
+        UserEntity userEntity = userRepository.findByEmail(email);
+        List<PostEntity> posts = postRepository.getByUserIdOrderByCreatedAtDesc(userEntity.getId());
+
+        List<PostDto> postDtos = new ArrayList<>();
+        for (PostEntity post : posts) {
+            PostDto postDto = mapper.map(post, PostDto.class);
+            postDtos.add(postDto);
+
+        }
+
+        return postDtos;
     }
 
 }

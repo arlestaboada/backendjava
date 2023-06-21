@@ -28,6 +28,9 @@ public class UserController {
     @Autowired
     UserServiceInterface userService;
 
+    @Autowired
+    ModelMapper modelMapper;
+
     @GetMapping(produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public UserRest getUser() {
         Authentication authentication = SecurityContextHolder
@@ -35,7 +38,7 @@ public class UserController {
                 .getAuthentication();
         String email = authentication.getPrincipal().toString();
         UserDto userDto = userService.getUser(email);
-        ModelMapper modelMapper = new ModelMapper();
+
         UserRest userRest = modelMapper.map(userDto, UserRest.class);
 
         return userRest;
@@ -53,7 +56,7 @@ public class UserController {
         return userToReturn;
     }
 
-    @GetMapping("/post") // localhost:8080/users/post
+    @GetMapping("/posts") // localhost:8080/users/post
     public List<PostRest> getPots() {
         Authentication authentication = SecurityContextHolder
                 .getContext()
@@ -61,6 +64,13 @@ public class UserController {
         String email = authentication.getPrincipal().toString();
         List<PostDto> posts = userService.getUserPots(email);
         List<PostRest> postRests = new ArrayList<>();
+
+        for (PostDto post : posts) {
+            PostRest postRest = modelMapper.map(post, PostRest.class);
+            postRests.add(postRest);
+
+        }
+
         return postRests;
     }
 

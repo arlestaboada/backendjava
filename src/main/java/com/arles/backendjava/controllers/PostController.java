@@ -1,11 +1,14 @@
 package com.arles.backendjava.controllers;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +27,9 @@ public class PostController {
     @Autowired
     PostServiceInterface postService;
 
+    @Autowired
+    ModelMapper mapper;
+
     @PostMapping
     private PostRest createPost(@RequestBody PostCreateRequestModel createRequestModel) {
 
@@ -31,8 +37,6 @@ public class PostController {
                 .getContext()
                 .getAuthentication();
         String email = authentication.getPrincipal().toString();
-
-        ModelMapper mapper = new ModelMapper();
 
         PostCreationDto postCreationDto = mapper.map(
                 createRequestModel,
@@ -49,6 +53,25 @@ public class PostController {
         }
 
         return postToReturn;
+
+    }
+
+    @GetMapping(path = "/last") // localhost:8080/posts/last
+    public List<PostRest> lastPosts() {
+
+        List<PostDto> postDtos = postService.getLastPosts();
+
+        List<PostRest> postRests = new ArrayList<>();
+
+        for (PostDto postDto : postDtos) {
+
+            PostRest postRest = mapper.map(postDto, PostRest.class);
+
+            postRests.add(postRest);
+
+        }
+
+        return postRests;
 
     }
 

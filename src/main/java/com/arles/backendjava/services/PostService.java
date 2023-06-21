@@ -1,6 +1,8 @@
 package com.arles.backendjava.services;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
@@ -28,6 +30,9 @@ public class PostService implements PostServiceInterface {
         @Autowired
         ExposureRepository exposureRepository;
 
+        @Autowired
+        ModelMapper mapper;
+
         @Override
         public PostDto createPost(PostCreationDto post) {
 
@@ -47,10 +52,29 @@ public class PostService implements PostServiceInterface {
 
                 PostEntity createdPost = postRepository.save(postEntity);
 
-                ModelMapper mapper = new ModelMapper();
                 PostDto postToReturn = mapper.map(createdPost, PostDto.class);
 
                 return postToReturn;
+        }
+
+        @Override
+        public List<PostDto> getLastPosts() {
+
+                long publicExposureId = 2;
+                List<PostEntity> postsEntities = postRepository.getLastPublicPosts(
+                                publicExposureId,
+                                new Date(System.currentTimeMillis()));
+
+                List<PostDto> postDtos = new ArrayList<>();
+
+                for (PostEntity post : postsEntities) {
+
+                        PostDto postDto = mapper.map(post, PostDto.class);
+                        postDtos.add(postDto);
+
+                }
+                return postDtos;
+
         }
 
 }
