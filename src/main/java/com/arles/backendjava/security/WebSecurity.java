@@ -30,16 +30,16 @@ public class WebSecurity {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        String url = "/users";
         // Configure AuthenticationManagerBuilder
         final AuthenticationManagerBuilder authenticationManagerBuilder = http
                 .getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(userService)
                 .passwordEncoder(bCryptPasswordEncoder);
         final AuthenticationManager authenticationManager = authenticationManagerBuilder.getOrBuild();
-
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST, url)
+                .requestMatchers(HttpMethod.POST, "/users")
+                .permitAll()
+                .requestMatchers(HttpMethod.GET, "/posts/last")
                 .permitAll()
                 .anyRequest()
                 .authenticated())
@@ -49,8 +49,8 @@ public class WebSecurity {
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilter(new AuthorizationFilter(authenticationManager))
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement(management -> management
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
 
     }
