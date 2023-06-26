@@ -5,7 +5,7 @@ import java.util.Date;
 public class PostRest {
 
     private long id;
-    private String post_id;
+    private String postId;
     private String title;
     private String content;
     private Date createdAt;
@@ -24,12 +24,12 @@ public class PostRest {
         this.id = id;
     }
 
-    public String getPost_id() {
-        return this.post_id;
+    public String getPostId() {
+        return this.postId;
     }
 
-    public void setPost_id(String post_id) {
-        this.post_id = post_id;
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
     public String getTitle() {

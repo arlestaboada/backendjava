@@ -8,7 +8,7 @@ public class PostDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private long id;
-    private String post_id;
+    private String postID;
     private String title;
     private String content;
     private Date createdAt;
@@ -25,12 +25,12 @@ public class PostDto implements Serializable {
         this.id = id;
     }
 
-    public String getPost_id() {
-        return this.post_id;
+    public String getPostID() {
+        return this.postID;
     }
 
-    public void setPost_id(String post_id) {
-        this.post_id = post_id;
+    public void setPostID(String postID) {
+        this.postID = postID;
     }
 
     public String getTitle() {

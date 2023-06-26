@@ -1,6 +1,7 @@
 package com.arles.backendjava.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -67,6 +68,12 @@ public class UserController {
 
         for (PostDto post : posts) {
             PostRest postRest = modelMapper.map(post, PostRest.class);
+
+            if (postRest.getExpiresAt().compareTo(
+                    new Date(System.currentTimeMillis())) < 0) {
+
+                postRest.setExpired(true);
+            }
             postRests.add(postRest);
 
         }

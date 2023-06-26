@@ -8,7 +8,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,9 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.arles.backendjava.models.requests.PostCreateRequestModel;
 import com.arles.backendjava.models.responses.PostRest;
+import com.arles.backendjava.models.responses.operationStatusModel;
 import com.arles.backendjava.services.PostServiceInterface;
+import com.arles.backendjava.services.UserServiceInterface;
 import com.arles.backendjava.shared.dto.PostCreationDto;
 import com.arles.backendjava.shared.dto.PostDto;
+import com.arles.backendjava.shared.dto.UserDto;
 
 @RestController
 @RequestMapping("/posts") // localhost:8080/posts
@@ -26,6 +31,9 @@ public class PostController {
 
     @Autowired
     PostServiceInterface postService;
+
+    @Autowired
+    UserServiceInterface userService;
 
     @Autowired
     ModelMapper mapper;
@@ -72,6 +80,49 @@ public class PostController {
         }
 
         return postRests;
+
+    }
+
+    @GetMapping(path = { "/{id}" }) // localhost/posts/uuid
+    public PostRest getPost(@PathVariable String id) {
+        PostDto post = postService.getPost(id);
+        PostRest postRest = mapper.map(post, PostRest.class);
+
+        if (postRest.getExpiresAt().compareTo(
+                new Date(System.currentTimeMillis())) < 0) {
+
+            postRest.setExpired(true);
+        }
+        // validar si el post es privado o si el post ya expiro
+        if (postRest.getExposure().getId() == 1 ||
+                postRest.getExpired()) {
+            Authentication authentication = SecurityContextHolder.getContext()
+                    .getAuthentication();
+            UserDto user = userService.getUser(authentication.getPrincipal().toString());
+
+            if (user.getId() != post.getUser().getId()) {
+
+                throw new RuntimeException("No tienes permisos para realizar esta acción");
+            }
+
+        }
+
+        return postRest;
+
+    }
+
+    @DeleteMapping("/{id}")
+    public operationStatusModel deletePost(@PathVariable String id) {
+
+        Authentication authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+        UserDto user = userService.getUser(authentication.getPrincipal().toString());
+        operationStatusModel operationStatusModel = new operationStatusModel();
+        operationStatusModel.setName("Delete");
+        postService.deletePost(id, user.getId());
+        operationStatusModel.setResult("Success");
+
+        return operationStatusModel;
 
     }
 

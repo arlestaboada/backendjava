@@ -12,15 +12,19 @@ import com.arles.backendjava.entities.PostEntity;
 
 @Repository
 public interface PostRepository
-        extends PagingAndSortingRepository<PostEntity, Long> {
+                extends PagingAndSortingRepository<PostEntity, Long> {
 
-    List<PostEntity> getByUserIdOrderByCreatedAtDesc(long userId);
+        List<PostEntity> getByUserIdOrderByCreatedAtDesc(long userId);
 
-    @Query(value = "SELECT * FROM POST p WHERE p.exposure_id =:exposure and p.expires_at>:now ORDER BY created_at DESC LIMIT 20", nativeQuery = true)
-    List<PostEntity> getLastPublicPosts(
-            @Param("exposure") long exposureId,
-            @Param("now") Date now);
+        @Query(value = "SELECT * FROM POST p WHERE p.exposure_id =:exposure and p.expires_at>:now ORDER BY created_at DESC LIMIT 20", nativeQuery = true)
+        List<PostEntity> getLastPublicPosts(
+                        @Param("exposure") long exposureId,
+                        @Param("now") Date now);
 
-    PostEntity save(PostEntity postEntity);
+        PostEntity save(PostEntity postEntity);
+
+        PostEntity findByPostId(String postID);
+
+        void delete(PostEntity postEntity);
 
 }

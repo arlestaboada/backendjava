@@ -21,6 +21,38 @@ import com.arles.backendjava.shared.dto.PostDto;
 @Service
 public class PostService implements PostServiceInterface {
 
+        public PostRepository getPostRepository() {
+                return this.postRepository;
+        }
+
+        public void setPostRepository(PostRepository postRepository) {
+                this.postRepository = postRepository;
+        }
+
+        public UserRepository getUserRepository() {
+                return this.userRepository;
+        }
+
+        public void setUserRepository(UserRepository userRepository) {
+                this.userRepository = userRepository;
+        }
+
+        public ExposureRepository getExposureRepository() {
+                return this.exposureRepository;
+        }
+
+        public void setExposureRepository(ExposureRepository exposureRepository) {
+                this.exposureRepository = exposureRepository;
+        }
+
+        public ModelMapper getMapper() {
+                return this.mapper;
+        }
+
+        public void setMapper(ModelMapper mapper) {
+                this.mapper = mapper;
+        }
+
         @Autowired
         PostRepository postRepository;
 
@@ -44,7 +76,7 @@ public class PostService implements PostServiceInterface {
                 PostEntity postEntity = new PostEntity();
                 postEntity.setUser(userEntity);
                 postEntity.setExposure(exposureEntity);
-                postEntity.setPost_id(UUID.randomUUID().toString());
+                postEntity.setPostId(UUID.randomUUID().toString());
                 postEntity.setTitle(post.getTitle());
                 postEntity.setContent(post.getContent());
                 postEntity.setExpiresAt(new Date(System.currentTimeMillis()
@@ -74,6 +106,29 @@ public class PostService implements PostServiceInterface {
 
                 }
                 return postDtos;
+
+        }
+
+        @Override
+        public PostDto getPost(String postId) {
+
+                PostEntity postEntity = postRepository.findByPostId(postId);
+                PostDto postDto = mapper.map(postEntity, PostDto.class);
+
+                return postDto;
+        }
+
+        @Override
+        public void deletePost(String postId, long userId) {
+
+                PostEntity postEntity = postRepository.findByPostId(postId);
+
+                if (postEntity.getUser().getId() != userId) {
+                        throw new RuntimeException("No tienes permisos para realizar esta acción");
+
+                }
+
+                postRepository.delete(postEntity);
 
         }
 

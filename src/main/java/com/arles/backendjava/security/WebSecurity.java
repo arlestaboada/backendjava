@@ -37,10 +37,9 @@ public class WebSecurity {
                 .passwordEncoder(bCryptPasswordEncoder);
         final AuthenticationManager authenticationManager = authenticationManagerBuilder.getOrBuild();
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST, "/users")
-                .permitAll()
-                .requestMatchers(HttpMethod.GET, "/posts/last")
-                .permitAll()
+                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                .requestMatchers(HttpMethod.GET, "/posts/last").permitAll()
+                .requestMatchers(HttpMethod.GET, "/posts/{id}").permitAll()
                 .anyRequest()
                 .authenticated())
 

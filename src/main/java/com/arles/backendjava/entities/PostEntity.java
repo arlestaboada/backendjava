@@ -27,8 +27,8 @@ public class PostEntity implements Serializable {
     @Id
     @GeneratedValue
     private long id;
-    @Column(nullable = false)
-    private String post_id;
+    @Column(name = "post_id", nullable = false)
+    private String postId;
     @Column(nullable = false, length = 255)
     private String title;
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -54,12 +54,12 @@ public class PostEntity implements Serializable {
         this.id = id;
     }
 
-    public String getPost_id() {
-        return this.post_id;
+    public String getPostId() {
+        return this.postId;
     }
 
-    public void setPost_id(String post_id) {
-        this.post_id = post_id;
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
     public String getTitle() {
