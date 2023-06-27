@@ -132,4 +132,33 @@ public class PostService implements PostServiceInterface {
 
         }
 
+        @Override
+        public PostDto updatePost(
+                        String postId,
+                        long userId,
+                        PostCreationDto postUpdateDto) {
+
+                PostEntity postEntity = postRepository.findByPostId(postId);
+
+                if (postEntity.getUser().getId() != userId) {
+                        throw new RuntimeException(
+                                        "No tienes permisos para realizar esta acción");
+
+                }
+
+                ExposureEntity exposureEntity = exposureRepository
+                                .findById(postUpdateDto.getExposureId());
+
+                postEntity.setExposure(exposureEntity);
+                postEntity.setTitle(postUpdateDto.getTitle());
+                postEntity.setContent(postUpdateDto.getContent());
+                postEntity.setExpiresAt(new Date(System.currentTimeMillis()
+                                + (postUpdateDto.getExpirationTime() * 60000)));
+
+                PostEntity updatePost = postRepository.save(postEntity);
+
+                PostDto postDto = mapper.map(updatePost, PostDto.class);
+                return postDto;
+        }
+
 }

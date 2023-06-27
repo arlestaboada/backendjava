@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -124,6 +125,24 @@ public class PostController {
 
         return operationStatusModel;
 
+    }
+
+    @PutMapping("/{id}")
+    public PostRest updatePost(
+            @RequestBody PostCreateRequestModel createRequestModel,
+            @PathVariable String id) {
+
+        Authentication authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+        UserDto user = userService.getUser(authentication.getPrincipal().toString());
+
+        PostCreationDto postUpdateDto = mapper.map(createRequestModel, PostCreationDto.class);
+
+        PostDto postDto = postService.updatePost(id, user.getId(), postUpdateDto);
+
+        PostRest updatePost = mapper.map(postDto, PostRest.class);
+
+        return updatePost;
     }
 
 }

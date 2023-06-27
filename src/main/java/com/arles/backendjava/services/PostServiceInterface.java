@@ -15,4 +15,6 @@ public interface PostServiceInterface {
 
     public void deletePost(String postId, long userId);
 
+    public PostDto updatePost(String postId, long userId, PostCreationDto postUpdateDto);
+
 }
