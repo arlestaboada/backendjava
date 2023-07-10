@@ -70,6 +70,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         UserServiceInterface userService = (UserServiceInterface) SpringApplicationContext.getBean(beanName);
 
         UserDto userDto = userService.getUser(userName);
+        response.addHeader("Access-Control-Expose-Headers", "Authorization,UserId");
         response.addHeader("UserId", userDto.getUserId());
         response.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
 
